@@ -1,7 +1,7 @@
 import numpy as np
 import pygame
 import math
-from utils import world_to_screen, calculate_angle
+from utils import world_to_screen, calculate_angle, apply_gravitational_force
 
 
 BLUE = (0, 0, 255)
@@ -15,6 +15,8 @@ class Draw:
         self.rocket = rocket
         self.camera = camera
         self.planets = planets
+        self.rocket_image = pygame.image.load("rocket-simulation/assets/rocket.png").convert_alpha()
+        self.rocket_image = pygame.transform.scale(self.rocket_image, (int(self.rocket.size[0]), int(self.rocket.size[1])))
 
     def draw_parameters(self):
         # Drawing rocket parameters on screen
@@ -36,6 +38,8 @@ class Draw:
             if distance < 1000:
                 screen_pos = world_to_screen(self.camera.apply(planet.body.position), HEIGHT)
                 angle = calculate_angle(self.rocket, planet)
+                apply_gravitational_force(self.rocket, screen_pos, planet.mass, world_to_screen(self.camera.apply(self.rocket.body.position), HEIGHT), scale)
+                # ^^ will be moved to right class
 
                 # Parameter for drawing arc
                 arc_rect = (
@@ -45,16 +49,22 @@ class Draw:
                     int(planet.radius * 2)
                 )
                 d_angle = np.pi / (0.006 * planet.radius)
-                arc_width = int(-0.000000314*(planet.radius*scale)+500)
-                if arc_width <=0: arc_width = 200
+                arc_width = planet.arc_height
                 pygame.draw.arc(
                     self.window, pygame.Color(planet.color),
                     arc_rect, angle - d_angle, angle + d_angle, arc_width
                 )
 
     def draw_rocket(self):
-        vertices = [self.camera.apply(v.rotated(self.rocket.body.angle) + self.rocket.body.position) for v in self.rocket.shape.get_vertices()]
-        pygame.draw.polygon(self.window, RED, [world_to_screen(v, HEIGHT) for v in vertices])
+        # Rotate the image based on the rocket's angle
+        rotated_image = pygame.transform.rotate(self.rocket_image, math.degrees(self.rocket.body.angle))
+        rocket_pos = self.camera.apply(self.rocket.body.position)
+
+        # Adjust position to ensure image center aligns with rocket position
+        image_rect = rotated_image.get_rect(center=world_to_screen(rocket_pos, HEIGHT))
+
+        # Draw the rotated image
+        self.window.blit(rotated_image, image_rect.topleft)
 
 class Camera:
     def __init__(self):

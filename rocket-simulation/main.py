@@ -24,18 +24,16 @@ GROUND_COLOR = (139, 69, 19)
 
 # Scale 1 = 1 meter is 1 px
 # Scale 2 = 2 meters is 1 px
-SCALE = 30
+SCALE = 15
 FPS = 144
 space = pymunk.Space()
 
 config = load_json('config.json')
 rocket_config = config["rocket"]
 
-space.gravity = (0, -9.81 * SCALE)
 
-
-planets = {"Earth": Planet(space,"Earth", BLUE, (400 * SCALE, 6371 * SCALE), 6371*SCALE),
-           "Mars": Planet(space,"Mars", RED, (400 * SCALE, 6378371 * SCALE), 0.1*SCALE)}
+planets = {"Earth": Planet(space,"Earth", BLUE, (400 * SCALE, 6371 * SCALE), 6371*SCALE, SCALE, mass=5.972*10**24*SCALE),
+           "Mars": Planet(space,"Mars", RED, (400 * SCALE, 6378371 * SCALE), 0.1*SCALE, SCALE, mass=2*10**16*SCALE)}
 
 spawn_position = planets[rocket_config["spawn"]].body.position
 
@@ -59,7 +57,7 @@ while running:
 
     # Rocket Controls: Forward Thrust and Spin
     if keys[pygame.K_UP]:
-        rocket.apply_thrust(100)
+        rocket.apply_thrust(100/SCALE)
     if keys[pygame.K_LEFT]:
         rocket.rotate(1)
     if keys[pygame.K_RIGHT]:
