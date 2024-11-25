@@ -1,0 +1,11 @@
+{
+    "rocket": {
+        "mass": 50000,
+        "fuel": 20000,
+        "thrust": 820000,
+        "drag_coefficient": 0.75,
+        "surface_area": 10,
+        "height": 20,
+        "spawn": "Earth"
+    }
+}
