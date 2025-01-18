@@ -53,7 +53,7 @@ git clone https://github.com/Szynszek/rocket-simulation.git
 Przejdź do katalogu projektu:
 
 ```bash
-cd rocket-simulation
+cd rocket-simulation/rocket-simulation
 ```
 Uruchom program:
 
