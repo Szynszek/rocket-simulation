@@ -2,10 +2,8 @@
 
 ![Python](https://img.shields.io/badge/Python-3.9-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Status](https://img.shields.io/badge/status-Development-orange)
 
-
 ## 📖 Opis projektu
 
----
 Projekt został stworzony z myślą o nauce i rozwoju umiejętności programistycznych.
 Głównym celem było stworzenie symulacji lotu rakiety, umożliwiającej przewidywanie trajektorii na dużych dystansach.
 Program pozwala na dodawanie nowych planet, zmianę parametrów rakiety i testowanie różnych scenariuszy lotu.
@@ -14,11 +12,11 @@ Projekt powstał w ramach studiów na kierunku **Fizyka Techniczna**, a także z
 
 ## 🖼 Zrzut ekranu
 
----
 Widok z symulacji:
 
 ![Rocket Simulation Screenshot](assets/screenshot.png)
 Działanie zooma:
+
 ![Rocket Simulation Zoom](assets/zoom.gif)
 ## 🚀 Funkcjonalności
 
@@ -32,7 +30,6 @@ Działanie zooma:
 
 ## 🛠 Instalacja
 
---- 
 ### Wymagania
 
 Aby uruchomić projekt, musisz mieć zainstalowane następujące biblioteki:
@@ -73,7 +70,6 @@ Co zobaczysz na początku:
 
 ## 🎮 Interakcja
 
----
 - **Strzałki** – poruszanie rakietą (**Strzałka w góre** – zmiana ciągu).
 - **Kółko myszy** lub **Klawisze `-`, `=`** – Zmiana poziomu zoomu.
 - **Klawisz `r`** – Restartowanie symulacji.
@@ -81,7 +77,6 @@ Co zobaczysz na początku:
 
 ## 🔬 Jak działa symulacja?
 
----
 Trajektoria lotu rakiety obliczana jest przy użyciu prawa powszechnego ciążenia Newtona:
 
 $$ F = G \cdot \frac{m_1 \cdot m_2}{r^2} $$
@@ -98,15 +93,12 @@ Do obliczeń numerycznych trajektorii rakiety wykorzystano zaawansowany algorytm
 
 ## 🛠 Główne biblioteki używane w projekcie
 
----
 - [**Pygame**](https://www.pygame.org/docs/) – do renderowania wizualizacji symulacji.
 - [**Pymunk**](https://www.pymunk.org/en/latest/pymunk.html) – do obsługi fizyki kolizji i symulacji.
 - [**SciPy**](https://docs.scipy.org/doc/) – do zaawansowanych obliczeń numerycznych.
 
-
 ## 🌍 Plany na przyszłość
 
----
 - [ ] Możliwość dodania obiektów bezpośrednio w symulacji, a nie w kodzie.
 - [ ] Dodanie dodatkowych sił np. oporu powietrza.
 - [ ] Dodanie większej liczby planet (Cały układ słoneczny).
@@ -116,6 +108,5 @@ Do obliczeń numerycznych trajektorii rakiety wykorzystano zaawansowany algorytm
 - [ ] Dodanie wieloprocesorowości dla zwiększenia wydajności.
 ## ‍💻 Autor
 
----
 Projekt stworzony przez **Szymona Błasiaka**, studenta **Inżynierii Lotniczej i Kosmicznej** oraz **Fizyki Technicznej**. 
 [GitHub: Szynszek](https://github.com/Szynszek)
