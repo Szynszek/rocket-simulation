@@ -2,7 +2,7 @@ import pymunk
 import math
 
 def apply_gravitational_force(rocket, planet):
-    G = 6.674 * 10 ** -11  # Gravitational constant
+    G = 6.6743 * 10 ** -11  # Gravitational constant
     # World positions
     rocket_position = rocket.body.position
     planet_position = planet.body.position

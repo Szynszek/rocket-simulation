@@ -39,12 +39,7 @@ Aby uruchomić projekt, musisz mieć zainstalowane następujące biblioteki:
 - `pymunk==6.9.0`
 - `scipy==1.15.1`
 
-Zainstaluj wymagane pakiety, używając polecenia:
-
-```bash
-pip install -r requirements.txt
-```
-Uruchomienie
+### Uruchomienie
 Sklonuj repozytorium:
 
 ```bash
@@ -54,6 +49,11 @@ Przejdź do katalogu projektu:
 
 ```bash
 cd rocket-simulation/rocket-simulation
+```
+Zainstaluj wymagane pakiety, używając polecenia:
+
+```bash
+pip install -r requirements.txt
 ```
 Uruchom program:
 
