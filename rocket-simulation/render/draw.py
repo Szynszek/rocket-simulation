@@ -21,20 +21,6 @@ class Draw:
     def draw_parameters(self, steps):
 
         current_velocity = int(math.sqrt(self.rocket.body.velocity.x ** 2 + self.rocket.body.velocity.y ** 2))
-        #
-        # # Oblicz delta V
-        # if self.into <= 60:
-        #     self.velo[self.into] = current_velocity  # Update velocity in the list
-        #     self.into += 1
-        # else:
-        #     ad_v = 0
-        #     for i in range(60):
-        #         ad_v += self.velo[i]
-        #     avg = ad_v / 60
-        #     self.into = 0  # Reset index after averaging
-        #
-        #     delta_v = current_velocity - avg
-        #     print(f"ac: {delta_v / 1} m/s^2")  # Print delta V value
 
         # Displaying velocities and positions
         font = pygame.font.SysFont('Arial', 14)

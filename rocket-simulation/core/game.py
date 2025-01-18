@@ -23,8 +23,8 @@ class Game:
         self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT))
         self.planets = {
             "Earth": Planet(self.space, "Earth", (0, 0, 255), (400, 0), 6371, mass=5.972e24),
-            "1": Planet(self.space, "1", (0, 255, 0), (-400, 6372300), 0.5, mass=1e18),
-            "2": Planet(self.space, "2", (255, 0, 0), (1260, 6372300), 0.5, mass=1e18)
+            "1": Planet(self.space, "1", (0, 255, 0), (-400, 6372300), 0.5, mass=1.7e17),
+            "2": Planet(self.space, "2", (255, 0, 0), (1260, 6372300), 0.5, mass=1.7e17)
         }
         self.spawn_position_vec = self.planets[self.config["rocket"]["spawn"]].body.position
         self.spawn_position = [int(self.spawn_position_vec[0]), int(self.spawn_position_vec[1])]
