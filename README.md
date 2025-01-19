@@ -1,6 +1,6 @@
 # 🚀 Rocket Simulation
 
-![Python](https://img.shields.io/badge/Python-3.9-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Status](https://img.shields.io/badge/status-Development-orange)
+![Python](https://img.shields.io/badge/Python-3.11-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![Status](https://img.shields.io/badge/status-Development-orange)
 
 ## 📖 Opis projektu
 
