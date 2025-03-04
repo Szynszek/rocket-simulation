@@ -13,9 +13,8 @@ class Draw:
         self.height = height
         self.rocket_image = pygame.image.load("assets/rocket.png").convert_alpha()
         self.rocket_image = pygame.transform.scale(self.rocket_image, (int(self.rocket.size[0]), int(self.rocket.size[1])))
-        self.velo = []
-        for i in range(61):
-            self.velo.append(0)
+        self.flame_image = pygame.image.load("assets/flame.png").convert_alpha()
+        # self.flame_image = pygame.transform.scale(self.flame_image, (int(self.rocket.size[0]), int(self.rocket.size[1])))
         self.into = int(0)
 
     def draw_parameters(self, steps):
@@ -74,13 +73,35 @@ class Draw:
 
     def draw_rocket(self):
         scaled_size = self.camera.apply_scale(self.rocket.size)
-        rotated_image = pygame.transform.rotate(
+
+        # Obrót rakiety
+        angle_degrees = math.degrees(self.rocket.body.angle)
+        rotated_rocket = pygame.transform.rotate(
             pygame.transform.scale(self.rocket_image, (int(scaled_size[0]), int(scaled_size[1]))),
-            math.degrees(self.rocket.body.angle)
+            angle_degrees
         )
+
         rocket_pos = self.camera.apply(self.rocket.body.position)
-        image_rect = rotated_image.get_rect(center=world_to_screen(rocket_pos, self.height))
-        self.window.blit(rotated_image, image_rect.topleft)
+        image_rect = rotated_rocket.get_rect(center=world_to_screen(rocket_pos, self.height))
+
+        # Rysowanie rakiety
+        self.window.blit(rotated_rocket, image_rect.topleft)
+
+        # Obsługa płomienia
+        if self.rocket.thrust_position > 0 and self.rocket.fuel_mass > 0:
+            scale_factor = self.camera.zoom
+            flame_height = int(self.flame_image.get_height() * scale_factor * (self.rocket.thrust_position / 100))
+
+            # Skalowanie płomienia (szerokość zostaje taka sama jak rakiety)
+            flame_scaled = pygame.transform.scale(self.flame_image, (int(scaled_size[0]), flame_height))
+            rotated_flame = pygame.transform.rotate(flame_scaled, angle_degrees)
+
+            # Korekcja pozycji płomienia
+            flame_offset = pygame.Vector2(0, scaled_size[1] / 2 + flame_height / 2).rotate(-angle_degrees)
+            flame_pos = (image_rect.centerx + flame_offset.x, image_rect.centery + flame_offset.y)
+
+            # Rysowanie płomienia
+            self.window.blit(rotated_flame, rotated_flame.get_rect(center=flame_pos).topleft)
 
     def draw_predicted_trajectory(self, trajectory):
         if len(trajectory) < 2:
@@ -91,6 +112,6 @@ class Draw:
                 world_to_screen(self.camera.apply(pos), self.height) for pos in trajectory
             ]
             trajectory_tuples = [(point[0], point[1]) for point in trajectory_points]
-            pygame.draw.lines(self.window, (255, 255, 255), False, trajectory_tuples, 1)
+            pygame.draw.lines(self.window, (255, 255, 255), False, trajectory_tuples, 1) # set closed to True for displacement
         except TypeError:
             print("Trajectory not found.")

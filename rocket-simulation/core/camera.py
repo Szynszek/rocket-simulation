@@ -6,6 +6,8 @@ class Camera:
         self.zoom = 2.0
         self.target_zoom = 2.0
         self.zoom_speed = 0.1  # zoom change speed
+        self.max_zoom = 5
+        self.min_zoom = 0.0000001
 
     def update(self, target):
         self.zoom += (self.target_zoom - self.zoom) * self.zoom_speed
@@ -23,5 +25,5 @@ class Camera:
         return size[0] * self.zoom, size[1] * self.zoom
 
     def set_zoom(self, amount):
-        # 0.00001 < zoom < 5
-        self.target_zoom = max(0.00001, min(self.target_zoom + amount * self.target_zoom, 5.0))
+        # min_zoom < zoom < max_zoom
+        self.target_zoom = max(self.min_zoom, min(self.target_zoom + amount * self.target_zoom, self.max_zoom))
