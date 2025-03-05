@@ -28,14 +28,13 @@ class Rocket:
     def burn_fuel(self):
         self.fuel_mass -= self.fuel_stream*self.thrust_position
         self.body.mass = self.fuel_mass + self.netto_mass
-    def apply_thrust(self):
+
+    def get_thrust(self):
         if self.fuel_mass <= 0 or self.thrust_position <= 0.5:
             return
 
         force = pymunk.Vec2d(0, self.thrust).rotated(self.body.angle)
-        self.burn_fuel()
-
-        self.body.apply_force_at_world_point(force, self.body.position)
+        return force
 
     def rotate(self, angle_change):
         self.body.angular_velocity += angle_change * 0.03

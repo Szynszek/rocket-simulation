@@ -7,32 +7,49 @@ from scipy.integrate import solve_ivp
 from utils import helper
 
 
-def apply_gravitational_force(rocket, planet):
-    G = 6.6743 * 10 ** -11  # Gravitational constant
-    # World positions
-    rocket_position = rocket.body.position
-    planet_position = planet.body.position
+def calculate_gravity_force(x, y, mass, planets):
+    G = 6.6743 * 10 ** -11
+    MAX_FORCE = 1e10
+    total_force = pymunk.Vec2d(0, 0)  # Zabezpieczenie przed None
 
-    # Calculate the distance between the planet and the rocket
-    dx = rocket_position.x - planet_position.x
-    dy = rocket_position.y - planet_position.y
-    distance = math.sqrt(dx ** 2 + dy ** 2)
+    for planet in planets.values():
+        planet_position = planet.body.position
 
-    # Check to avoid division by zero
-    if distance == 0:
-        return
+        # Calculate the distance between the planet and the rocket
+        dx = x - planet_position.x
+        dy = y - planet_position.y
+        distance = math.sqrt(dx ** 2 + dy ** 2)
 
-    # Calculate gravitational force
-    force_magnitude = G * planet.mass * rocket.body.mass / (distance ** 2)
-    force_x = force_magnitude * (dx / distance)
-    force_y = force_magnitude * (dy / distance)
+        if distance < 1:
+            continue
 
-    # Apply gravitational force to the rocket
-    force = pymunk.Vec2d(-force_x, -force_y)  # Direction towards the planet
-    rocket.body.apply_force_at_world_point(force, rocket.body.position)
-    acceleration = force_magnitude / rocket.body.mass
+        force_magnitude = min(G * planet.mass * mass / (distance ** 2), MAX_FORCE)
+        force_x = force_magnitude * (dx / distance)
+        force_y = force_magnitude * (dy / distance)
+
+
+        total_force += pymunk.Vec2d(-force_x, -force_y)
+
+    return total_force
+
+def calculate_thrust_force(rocket):
+    force = rocket.get_thrust()
+    return force
+
+def apply_forces_to_rocket(rocket, planets):
+    x = rocket.body.position.x
+    y = rocket.body.position.y
+    mass = rocket.body.mass
+    gravity_force = calculate_gravity_force(x, y, mass, planets) or pymunk.Vec2d(0, 0)
+    thrust_force = calculate_thrust_force(rocket) or pymunk.Vec2d(0, 0)
+
+    total_force = thrust_force + gravity_force
+
+    rocket.body.apply_force_at_world_point(total_force, rocket.body.position)
+    rocket.burn_fuel()
     stop_rotation(rocket)
     # print(calculate_orbital_energy(rocket))
+
 
 def calculate_predicted_trajectory(rocket, planets):
     """
@@ -45,26 +62,10 @@ def calculate_predicted_trajectory(rocket, planets):
         Function describing the rocket's dynamics.
         """
         x, y, vx, vy = state
-        total_force_x = 0
-        total_force_y = 0
-        G = 6.6743 * 10 ** -11  # Gravitational constant
-        MIN_DISTANCE = 1  # Minimum distance
-        MAX_FORCE = 1e10  # Maximum gravitational force
-
-        for planet in planets.values():
-            dx = x - planet.body.position.x
-            dy = y - planet.body.position.y
-            distance = math.sqrt(dx ** 2 + dy ** 2)
-
-            if distance < MIN_DISTANCE:
-                continue  # Ignore too small distances
-
-            # Limit the gravitational force
-            force_magnitude = min(G * planet.mass * rocket.body.mass / distance ** 2, MAX_FORCE)
-            force_x = -force_magnitude * (dx / distance)
-            force_y = -force_magnitude * (dy / distance)
-            total_force_x += force_x
-            total_force_y += force_y
+        mass = rocket.body.mass
+        total_force = calculate_gravity_force(x, y, mass, planets)
+        total_force_x = total_force[0]
+        total_force_y = total_force[1]
 
         # Acceleration
         ax = total_force_x / rocket.body.mass
@@ -102,7 +103,7 @@ def calculate_predicted_trajectory(rocket, planets):
             closest[1] = planet
     velocity = math.sqrt(initial_state[2] ** 2 + initial_state[3] ** 2)
     G=6.6743 * 10 ** -11
-    print(math.sqrt(G*closest[1].mass/(closest[0]+closest[1].radius))-100)
+    # print(math.sqrt(G*closest[1].mass/(closest[0]+closest[1].radius))-100)
 
     ang = helper.calculate_angle(rocket, closest[1])
     v_tangential = math.sqrt((rocket.body.velocity.x*math.cos(ang-math.pi/2))**2+(rocket.body.velocity.y*math.sin(ang-math.pi/2))**2)
@@ -111,7 +112,9 @@ def calculate_predicted_trajectory(rocket, planets):
     if velocity <= math.sqrt(G*closest[1].mass/(closest[0]+closest[1].radius))-100:
         step_size = 0.000001*(0.1*closest[0]**2+velocity**2)+0.1
     else:
-        step_size = 0.0001 * velocity ** 3 + 0.1
+        step_size = 0.00001 * velocity ** 3 + 0.1
+    # step_size = 0.00001 * velocity ** 2 + 0.1
+
     solution = solve_ivp(
         dynamics,
         (0, 1e5),
@@ -121,9 +124,8 @@ def calculate_predicted_trajectory(rocket, planets):
         max_step=step_size,
         rtol=1e-6,
         atol=1e-9,
-        dense_output=True  # Dodaj to
+        dense_output=True
     )
-
     trajectory = []
     if solution.t_events[0].size > 0:
         t_impact = solution.t_events[0][0]
@@ -132,7 +134,6 @@ def calculate_predicted_trajectory(rocket, planets):
         trajectory = [pymunk.Vec2d(x, y) for x, y in zip(y_eval[0], y_eval[1])]
     else:
         trajectory = [pymunk.Vec2d(x, y) for x, y in zip(solution.y[0], solution.y[1])]
-    print(len(trajectory))
     return trajectory
 
 def stop_rotation(rocket): # temporary function

@@ -7,7 +7,7 @@ from core.camera import Camera
 from entities.planet import Planet
 from entities.rocket import Rocket
 from utils.loader import load_json
-from physics.physics import apply_gravitational_force,calculate_predicted_trajectory
+from physics.physics import apply_forces_to_rocket,calculate_predicted_trajectory
 
 class Game:
     def __init__(self):
@@ -21,9 +21,9 @@ class Game:
         self.background = pygame.image.load("assets/background.jpg").convert()
         self.background = pygame.transform.scale(self.background, (WIDTH, HEIGHT))
         self.planets: dict = {
-            "Earth": Planet(self.space, "Earth", (0, 0, 255), (0, 0), 6371, mass=5.972e24),
-
-        }
+            "Earth": Planet(self.space, "Earth", (0, 0, 255), (400, 0), 6371, mass=5.972e24),
+            "1": Planet(self.space, "1", (0, 255, 0), (-400, 6372300), 0.5, mass=1.7e17),
+            "2": Planet(self.space, "2", (255, 0, 0), (1260, 6372300), 0.5, mass=1.7e17)}
         self.spawn_position_vec = self.planets[self.config["rocket"]["spawn"]].body.position
         self.spawn_position = [int(self.spawn_position_vec[0]), int(self.spawn_position_vec[1])]
         self.spawn_position[0] = int(self.spawn_position[0])
@@ -34,7 +34,7 @@ class Game:
         self.visualizations = Draw(self.window, self.rocket, self.camera, self.planets, HEIGHT)
         self.steps = 1
         self.predicted_trajectory = []
-        self.trajectory_counter = 10
+        self.trajectory_counter = 20
         self.render_distance = ((WIDTH**2+HEIGHT**2)**0.5)/2
 
     def run(self):
@@ -94,12 +94,11 @@ class Game:
     def update(self):
         """Updates the physics simulation, rocket thrust, camera position, and trajectory prediction."""
         self.space.step(self.steps / FPS)
-        self.rocket.apply_thrust()
+        self.rocket.get_thrust()
         self.camera.update(self.rocket)
 
-        # Apply gravitational forces from all planets
-        for planet in self.planets.values():
-            apply_gravitational_force(self.rocket, planet)
+        # Apply forces to rocket from all sources
+        apply_forces_to_rocket(self.rocket, self.planets)
 
         # Recalculate trajectory every 20 frames
         if self.trajectory_counter >= 20:
