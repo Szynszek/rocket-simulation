@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import MOUSEWHEEL
 import pymunk
-from core.settings import WIDTH, HEIGHT, FPS
+from core.settings import WIDTH, HEIGHT, FPS, DIAGONAL
 from render.draw import Draw
 from core.camera import Camera
 from entities.planet import Planet
@@ -26,7 +26,6 @@ class Game:
             "2": Planet(self.space, "2", (255, 0, 0), (1260, 6372300), 0.5, mass=1.7e17)}
         self.spawn_position_vec = self.planets[self.config["rocket"]["spawn"]].body.position
         self.spawn_position = [int(self.spawn_position_vec[0]), int(self.spawn_position_vec[1])]
-        self.spawn_position[0] = int(self.spawn_position[0])
         self.spawn_position[1] += self.planets[self.config["rocket"]["spawn"]].radius + 16+1000 # 16 is rocket size
 
         self.rocket = Rocket(self.space, self.spawn_position)
@@ -35,7 +34,7 @@ class Game:
         self.steps = 1
         self.predicted_trajectory = []
         self.trajectory_counter = 20
-        self.render_distance = ((WIDTH**2+HEIGHT**2)**0.5)/2
+        self.render_distance = DIAGONAL
 
     def run(self):
         while self.running:
@@ -101,11 +100,10 @@ class Game:
         apply_forces_to_rocket(self.rocket, self.planets)
 
         # Recalculate trajectory every 20 frames
-        if self.trajectory_counter >= 20:
+        if self.trajectory_counter % 20 == 0:
             self.predicted_trajectory = calculate_predicted_trajectory(self.rocket, self.planets)
             self.trajectory_counter = 0
-        else:
-            self.trajectory_counter += 1
+        self.trajectory_counter += 1
 
     def draw(self):
         """Renders the game frame: background, planets, rocket, and trajectory."""

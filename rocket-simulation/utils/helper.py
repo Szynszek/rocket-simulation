@@ -22,5 +22,7 @@ def is_within_render_distance(rocket, planet, render_distance, zoom=1):
     """
     dx = rocket.body.position.x - planet.body.position.x
     dy = rocket.body.position.y - planet.body.position.y
-    distance = math.sqrt(dx ** 2 + dy ** 2)
-    return distance <= (render_distance/zoom) + planet.radius
+    max_distance = (render_distance / zoom) + planet.radius
+    dx_sq = dx ** 2
+    dy_sq = dy ** 2
+    return (dx_sq + dy_sq) <= max_distance ** 2

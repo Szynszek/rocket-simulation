@@ -31,7 +31,7 @@ class Rocket:
 
     def get_thrust(self):
         if self.fuel_mass <= 0 or self.thrust_position <= 0.5:
-            return
+            return pymunk.Vec2d(0, 0)
 
         force = pymunk.Vec2d(0, self.thrust).rotated(self.body.angle)
         return force

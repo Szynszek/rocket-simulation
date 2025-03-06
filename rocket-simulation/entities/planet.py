@@ -1,5 +1,5 @@
 import pymunk
-from core.settings import WIDTH, HEIGHT
+import core.settings as settings
 class Planet:
     def __init__(self, space, name, color, position, radius_km, mass):
         self.radius = radius_km * 1000
@@ -16,10 +16,9 @@ class Planet:
         space.add(self.body, self.shape)
 
     def calculate_arc_height(self):
-        distance_to_corner = ((WIDTH**2+HEIGHT**2)**(1/2))/2
-        if self.radius < distance_to_corner:
+        if self.radius < settings.DIAGONAL:
             return int(self.radius)
         elif self.radius > 6000000:
-            return int(distance_to_corner)
+            return int(settings.DIAGONAL)
         else:
             return int(-0.0000314*self.radius+501)
